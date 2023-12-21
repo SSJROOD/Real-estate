@@ -7,11 +7,13 @@ import About from './pages/About.jsx'
 import Profile from './pages/Profile.jsx'
 import SignIn from './pages/SignIn.jsx'
 import SignUp from './pages/SignUp.jsx'
+import Header from './components/Header.jsx';
 import { BrowserRouter,Routes,Route } from 'react-router-dom'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <BrowserRouter>
+    <Header />
     <Routes>
       <Route path="/" element={<App />} />
       <Route path="/home" element={<Home />} />
