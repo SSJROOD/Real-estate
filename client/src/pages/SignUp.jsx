@@ -1,6 +1,7 @@
 import { Link,useNavigate } from "react-router-dom";
 import { useState } from "react";
-import axios from "axios";
+import OAuth from "../components/OAuth";
+
 
 const SignUp = () => {
   const [formData, setFormData] = useState({});
@@ -18,12 +19,14 @@ const SignUp = () => {
     e.preventDefault();
     try {
        setLoading(true);
-       const response = await axios.post("/api/auth/signup", formData, {
+       const response = await fetch("/api/auth/signup", {
+         method: "POST",
          headers: {
            "Content-Type": "application/json",
          },
+         body: JSON.stringify(formData),
        });
-       const data = await response.data;
+       const data = await response.json();
        if (data.success === false) {
          setError(data.message);
          setLoading(false);
@@ -63,9 +66,13 @@ const SignUp = () => {
           id="passWord"
           onChange={handleChange}
         />
-        <button disabled={loading} className="bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80">
+        <button
+          disabled={loading}
+          className="bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80"
+        >
           {loading ? "Loading..." : "Sign Up"}
         </button>
+        <OAuth/>
       </form>
       <div className="flex gap-2 mt-5">
         <p>Already have an account?</p>

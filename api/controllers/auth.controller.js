@@ -37,3 +37,33 @@ export const signin = async (request, response, next) => {
     next(error);
   }
 };
+
+
+export const google = async (request, response, next) => {
+  try {
+    const validUser = await User.findOne({ eMail: request.body.email });
+    if(validUser){
+      const token = jwt.sign({ id: validUser._id }, process.env.JWT_SECRET);
+      const {passWord:pass, ...restOfData} = validUser._doc;
+      response
+        .cookie("access_token", token, { httpOnly: true })
+        .status(200)
+        .json(restOfData);
+    }
+    else{
+      let _username = request.body.name.split(" ").join("").toLowerCase()+Math.random().toString(36).slice(-4);
+      const generatedPassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
+      const hashedPassword = bcryptjs.hashSync(generatedPassword, 7);
+      const newUser = new User({ userName:_username, eMail:request.body.email, passWord: hashedPassword,avatar:request.body.photo });
+      await newUser.save();
+      const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET);
+      const {passWord:pass, ...restOfData} = newUser._doc;
+      response
+        .cookie("access_token", token, { httpOnly: true })
+        .status(200)
+        .json(restOfData);
+    }
+  } catch (error) {
+    next(error);
+  }
+};
