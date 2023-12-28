@@ -1,9 +1,13 @@
-import React from 'react'
+import React, { useState } from "react";
+import DeleteModal from "../components/DeleteModal";
 
 const Home = () => {
   return (
-    <div>Home</div>
-  )
-}
+    <div>
+      <button onClick={() => setModal(true)}>delete</button>
+      
+    </div>
+  );
+};
 
-export default Home
+export default Home;

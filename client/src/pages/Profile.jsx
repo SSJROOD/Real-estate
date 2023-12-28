@@ -11,13 +11,19 @@ import {
   updateUserStart,
   updateUserSuccess,
   updateUserFailure,
+  deleteUserStart,
+  deleteUserSuccess,
+  deleteUserFailure,
 } from "../redux/user/userSlice";
+import DeleteModal from "../components/DeleteModal";
+import { set } from "mongoose";
 
 //__________________________________________________________________________________________________________________________
 
 const Profile = () => {
   const dispatch = useDispatch();
   const fileRef = useRef(null);
+  const [modal, setModal] = useState(false);
   const { currentUser, loading, error } = useSelector((state) => state.user);
   const [file, setFile] = useState(undefined);
   const [filePercent, setFilePercent] = useState(0);
@@ -84,6 +90,29 @@ const Profile = () => {
     );
   };
 
+  const handleDeleteAccount = async () => {
+    try {
+      dispatch(deleteUserStart());
+      const response = await fetch(`/api/user/delete/${currentUser._id}`, {
+        method: "DELETE",
+      });
+      const data = await response.json();
+      if (data.success === false) {
+        dispatch(deleteUserFailure(data.message));
+        return;
+      }
+      dispatch(deleteUserSuccess(data));
+    } catch (error) {
+      dispatch(deleteUserFailure(error.message));
+    }
+    setModal(false);
+  };
+
+  useEffect(() => {
+    if (modal) {
+    }
+  }, [modal]);
+
   return (
     <div className="p-3 max-w-lg mx-auto">
       <h1 className="text-3xl font-semibold text-center my-7">profile</h1>
@@ -145,13 +174,40 @@ const Profile = () => {
         </button>
       </form>
       <div className="flex justify-between mt-5">
-        <span className="text-red-700 cursor-pointer">Delete Account</span>
+        <span
+          onClick={() => setModal(true)}
+          className="text-red-700 cursor-pointer"
+        >
+          Delete Account
+        </span>
         <span className="text-red-700 cursor-pointer">Sign out </span>
       </div>
       <p className="text-red-700 mt-5">{error ? error : ""}</p>
       <p className="text-green-700">
         {updateSuccess ? "User is updated successfully!" : ""}
       </p>
+      <DeleteModal
+        open={modal}
+        onClose={() => {
+          setModal(false);
+        }}
+      >
+        <p1>Are you sure you want to delete your account?</p1> <br />
+        <div className="flex gap-4 items-center justify-center py-2 px-4 font-semibold">
+          <button
+            className=" rounded-lg shadow-lg w-full text-gray-500"
+            onClick={() => setModal(false)}
+          >
+            <span>No</span>
+          </button>
+          <button
+            onClick={handleDeleteAccount}
+            className="w-full rounded-lg text-white bg-red-600 shadow-red-400/40"
+          >
+            <span>Yes</span>
+          </button>
+        </div>
+      </DeleteModal>
     </div>
   );
 };
