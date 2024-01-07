@@ -20,6 +20,7 @@ import {
 } from "../redux/user/userSlice";
 import DeleteModal from "../components/DeleteModal";
 import { set } from "mongoose";
+import { Link } from "react-router-dom";
 
 //__________________________________________________________________________________________________________________________
 
@@ -111,11 +112,6 @@ const Profile = () => {
     setModal(false);
   };
 
-  useEffect(() => {
-    if (modal) {
-    }
-  }, [modal]);
-
   const handlesignout = async () => {
     try {
       dispatch(signOutUserStart());
@@ -131,8 +127,11 @@ const Profile = () => {
     }
   };
 
+  const modalStyle = `fixed inset-0 flex justify-center items-center transition-colors`;
+
+
   return (
-    <div className="p-3 max-w-lg mx-auto">
+    <div className="p-3 max-w-lg mx-auto ">
       <h1 className="text-3xl font-semibold text-center my-7">profile</h1>
       <form onSubmit={handleSubmitForm} className="flex flex-col gap-4">
         <input
@@ -190,6 +189,7 @@ const Profile = () => {
         >
           {loading ? "Loading..." : "update"}
         </button>
+       
       </form>
       <div className="flex justify-between mt-5">
         <span
@@ -211,6 +211,7 @@ const Profile = () => {
         onClose={() => {
           setModal(false);
         }}
+        style={modalStyle}
       >
         <p1>Are you sure you want to delete your account?</p1> <br />
         <div className="flex gap-4 items-center justify-center py-2 px-4 font-semibold">
@@ -233,3 +234,4 @@ const Profile = () => {
 };
 
 export default Profile;
+//
