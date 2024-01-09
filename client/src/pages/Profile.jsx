@@ -34,6 +34,10 @@ const Profile = () => {
   const [fileError, setFileError] = useState(false);
   const [formdata, setFormdata] = useState({});
   const [updateSuccess, setUpdateSuccess] = useState(false);
+  const [usernameEditClicked, setUsernameEditClicked] = useState(false);
+  const [passwordEditClicked, setPasswordEditClicked] = useState(false);
+  const [emailEditClicked, setEmailEditClicked] = useState(false);
+
   const handleChange = (e) => {
     setFormdata({ ...formdata, [e.target.id]: e.target.value });
   };
@@ -129,7 +133,6 @@ const Profile = () => {
 
   const modalStyle = `fixed inset-0 flex justify-center items-center transition-colors`;
 
-
   return (
     <div className="p-3 max-w-lg mx-auto ">
       <h1 className="text-3xl font-semibold text-center my-7">profile</h1>
@@ -160,36 +163,70 @@ const Profile = () => {
             ""
           )}
         </p>
-        <input
-          defaultValue={currentUser.userName}
-          type="text"
-          placeholder="username"
-          id="userName"
-          className="border p-3 rounded-lg cursor-default"
-          onChange={handleChange}
-        />
-        <input
-          defaultValue={currentUser.eMail}
-          type="email"
-          placeholder="email"
-          id="eMail"
-          className="border p-3 rounded-lg"
-          onChange={handleChange}
-        />
-        <input
-          type="password"
-          placeholder="password"
-          id="passWord"
-          className="border p-3 rounded-lg"
-          onChange={handleChange}
-        />
+        <div className="flex justify-between">
+          <input
+            disabled={!usernameEditClicked}
+            defaultValue={currentUser.userName}
+            type="text"
+            placeholder="username"
+            id="userName"
+            className=" border w-2/3 p-3 rounded-lg"
+            onChange={handleChange}
+          />
+          <button
+            onClick={() => setUsernameEditClicked(true)}
+            type="button"
+            className="text-blue-500 w-16 text-center font-bold text-lg rounded-lg  hover:text-blue-800 hover:underline "
+          >
+            Edit
+          </button>
+        </div>
+        <div className="flex justify-between">
+          <input
+            disabled = {!emailEditClicked}
+            defaultValue={currentUser.eMail}
+            type="email"
+            placeholder="email"
+            id="eMail"
+            className=" w-2/3 border p-3 rounded-lg"
+            onChange={handleChange}
+          />
+          <button
+            onClick={() => setEmailEditClicked(true)}
+            type="button"
+            className="text-blue-500 text-lg w-16 text-center font-bold rounded-lg  hover:text-blue-800 hover:underline "
+          >
+            Edit
+          </button>
+        </div>
+        <div className="flex justify-between">
+          <input
+            disabled = {!passwordEditClicked}
+            type="password"
+            placeholder="password"
+            id="passWord"
+            className="border w-2/3 p-3 rounded-lg"
+            onChange={handleChange}
+          />
+          <button
+            onClick={() => setPasswordEditClicked(true)}
+            type="button"
+            className="text-blue-500 text-lg w-16 text-center font-bold rounded-lg  hover:text-blue-800 hover:underline "
+          >
+            Edit
+          </button>
+        </div>
+
         <button
           disabled={loading}
-          className="bg-slate-700 text-white rounded-lg p-3 uppercase hover:opacity-95 disabled:opacity-80"
+          className={`bg-slate-700 ${
+            usernameEditClicked || passwordEditClicked || emailEditClicked
+              ? ""
+              : "hidden"
+          } text-white rounded-lg p-3 uppercase hover:opacity-95 disabled:opacity-80`}
         >
           {loading ? "Loading..." : "update"}
         </button>
-       
       </form>
       <div className="flex justify-between mt-5">
         <span
