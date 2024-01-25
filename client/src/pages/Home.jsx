@@ -12,7 +12,7 @@ const Home = () => {
           alt=""
           className="w-full h-full object-cover object-bottom"
         />
-        <div className="flex flex-row items-center justify-between sm:w-1/3 w-1/2 rounded-md h-20  border absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white opacity-90">
+        <div className="flex flex-row items-center justify-between w-3/5 rounded-md h-20  border absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white opacity-90">
           <div className="w-11/12 pl-2">
             <input
               type="text"

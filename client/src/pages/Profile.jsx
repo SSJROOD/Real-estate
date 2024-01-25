@@ -37,6 +37,8 @@ const Profile = () => {
   const [usernameEditClicked, setUsernameEditClicked] = useState(false);
   const [passwordEditClicked, setPasswordEditClicked] = useState(false);
   const [emailEditClicked, setEmailEditClicked] = useState(false);
+  const [showListingsError, setShowListingsError] = useState(false);
+  const [listings, setListings] = useState([]);
 
   const handleChange = (e) => {
     setFormdata({ ...formdata, [e.target.id]: e.target.value });
@@ -133,6 +135,21 @@ const Profile = () => {
 
   const modalStyle = `fixed inset-0 flex justify-center items-center transition-colors`;
 
+  const handleShowListings = async () => {
+    try {
+      setShowListingsError(false);
+      const response = await fetch(`/api/user/listings/${currentUser._id}`);
+      const data = await response.json();
+      if (data.success === false) {
+        setShowListingsError(true);
+        return;
+      }
+      setListings(data);
+    } catch (error) {
+      setShowListingsError(true);
+    }
+  };
+
   return (
     <div className="p-3 max-w-lg mx-auto ">
       <h1 className="text-3xl font-semibold text-center my-7">profile</h1>
@@ -183,7 +200,7 @@ const Profile = () => {
         </div>
         <div className="flex justify-between">
           <input
-            disabled = {!emailEditClicked}
+            disabled={!emailEditClicked}
             defaultValue={currentUser.eMail}
             type="email"
             placeholder="email"
@@ -201,7 +218,7 @@ const Profile = () => {
         </div>
         <div className="flex justify-between">
           <input
-            disabled = {!passwordEditClicked}
+            disabled={!passwordEditClicked}
             type="password"
             placeholder="password"
             id="passWord"
@@ -228,14 +245,14 @@ const Profile = () => {
           {loading ? "Loading..." : "update"}
         </button>
       </form>
-      <div className="flex justify-between mt-5">
+      <div className="flex justify-between mt-5 font-bold">
         <span
           onClick={() => setModal(true)}
-          className="text-red-700 cursor-pointer"
+          className="text-red-500 cursor-pointer"
         >
           Delete Account
         </span>
-        <span onClick={handlesignout} className="text-red-700 cursor-pointer">
+        <span onClick={handlesignout} className="text-red-500 cursor-pointer">
           Sign out{" "}
         </span>
       </div>
@@ -250,7 +267,7 @@ const Profile = () => {
         }}
         style={modalStyle}
       >
-        <p1>Are you sure you want to delete your account?</p1> <br />
+        <p>Are you sure you want to delete your account?</p> <br />
         <div className="flex gap-4 items-center justify-center py-2 px-4 font-semibold">
           <button
             className=" rounded-lg shadow-lg w-full text-gray-500"
@@ -266,6 +283,38 @@ const Profile = () => {
           </button>
         </div>
       </DeleteModal>
+      <button
+        onClick={handleShowListings}
+        className="text-green-700 w-full cursor-default"
+      >
+        <span className="cursor-pointer">Show Listings </span>
+      </button>
+      <p className="text-red-700 mt-5">
+        {showListingsError ? "error showing listings" : ""}
+      </p>
+      {listings &&
+        listings.length > 0 &&
+        listings.map((listing) => (
+          <div key={listing._id} className="flex justify-between mb-4">
+            <Link
+              to={`/listing/${listing._id}`}
+              className="border w-full rounded-lg p-3 cursor-default flex items-center gap-4"
+            >
+              <img
+                src={listing.imageUrls[0]}
+                alt="Listing image"
+                className="h-16 w-16 object-contain cursor-pointer"
+              />
+              <p className="cursor-pointer font-semibold hover:underline truncate">
+                {listing.name}
+              </p>
+            </Link>
+            <div className=" ml-2 flex flex-col item-center justify-center font-bold">
+              <button className="text-red-500">Delete</button>
+              <button className="text-blue-700">Edit</button>
+            </div>
+          </div>
+        ))}
     </div>
   );
 };

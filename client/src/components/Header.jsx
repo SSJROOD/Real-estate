@@ -48,7 +48,7 @@ const Header = () => {
 
 
   return (
-    <header className="bg-white shadow-md w-full h-24 flex flex-col justify-center text-lg overflow-hidden">
+    <header className="bg-white  shadow-md w-full h-24 flex  font-normal flex-col justify-center text-lg overflow-hidden ">
       <div className="w-full flex justify-between items-center p-2">
         <ul className="flex gap-4 ml-4">
           <li className="hover:text-blue-500">
