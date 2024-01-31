@@ -8,3 +8,20 @@ export const createListing = async (request, response, next) => {
     next(error);
   }
 };
+
+export const deleteListing = async(request,response,next)=>{
+  
+    const listing = await Listing.findById(request.params.id);
+    if(!listing){
+      return response.status(404).json("Listing not found")
+    }
+    if(request.user.id !== listing.userRef){
+      return response.status(401).json("You are not authorized to delete this listing")
+    }
+    try {
+      await Listing.findByIdAndDelete(request.params.id);
+      response.status(200).json("Listing deleted successfully");
+    } catch (error) {
+      next(error);
+    }
+}

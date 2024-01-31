@@ -18,7 +18,6 @@ import {
   signOutUserFailure,
   signOutUserSuccess,
 } from "../redux/user/userSlice";
-import DeleteModal from "../components/DeleteModal";
 import { set } from "mongoose";
 import { Link } from "react-router-dom";
 
@@ -27,7 +26,6 @@ import { Link } from "react-router-dom";
 const Profile = () => {
   const dispatch = useDispatch();
   const fileRef = useRef(null);
-  const [modal, setModal] = useState(false);
   const { currentUser, loading, error } = useSelector((state) => state.user);
   const [file, setFile] = useState(undefined);
   const [filePercent, setFilePercent] = useState(0);
@@ -115,7 +113,6 @@ const Profile = () => {
     } catch (error) {
       dispatch(deleteUserFailure(error.message));
     }
-    setModal(false);
   };
 
   const handlesignout = async () => {
@@ -133,7 +130,6 @@ const Profile = () => {
     }
   };
 
-  const modalStyle = `fixed inset-0 flex justify-center items-center transition-colors`;
 
   const handleShowListings = async () => {
     try {
@@ -149,6 +145,36 @@ const Profile = () => {
       setShowListingsError(true);
     }
   };
+  
+  const handleDeleteClick = async (listingID) => {
+    try {
+      const response = await fetch(`/api/listing/delete/${listingID}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        console.error(
+          `Failed to delete listing with status: ${response.status}`
+        );
+        return;
+      }
+
+      const data = await response.json();
+
+      if (data.success === false) {
+        console.log(`Deletion failed: ${data.message}`);
+        return;
+      }
+
+      setListings((prev) =>
+        prev.filter((listing) => listing._id !== listingID)
+      );
+      console.log("Listing deleted successfully");
+    } catch (error) {
+      console.error(`Error during listing deletion: ${error.message}`);
+    }
+  };
+
 
   return (
     <div className="p-3 max-w-lg mx-auto ">
@@ -247,7 +273,7 @@ const Profile = () => {
       </form>
       <div className="flex justify-between mt-5 font-bold">
         <span
-          onClick={() => setModal(true)}
+          onClick={handleDeleteAccount}
           className="text-red-500 cursor-pointer"
         >
           Delete Account
@@ -260,29 +286,8 @@ const Profile = () => {
       <p className="text-green-700">
         {updateSuccess ? "User is updated successfully!" : ""}
       </p>
-      <DeleteModal
-        open={modal}
-        onClose={() => {
-          setModal(false);
-        }}
-        style={modalStyle}
-      >
-        <p>Are you sure you want to delete your account?</p> <br />
-        <div className="flex gap-4 items-center justify-center py-2 px-4 font-semibold">
-          <button
-            className=" rounded-lg shadow-lg w-full text-gray-500"
-            onClick={() => setModal(false)}
-          >
-            <span>No</span>
-          </button>
-          <button
-            onClick={handleDeleteAccount}
-            className="w-full rounded-lg text-white bg-red-600 shadow-red-400/40"
-          >
-            <span>Yes</span>
-          </button>
-        </div>
-      </DeleteModal>
+    
+
       <button
         onClick={handleShowListings}
         className="text-green-700 w-full cursor-default"
@@ -310,7 +315,9 @@ const Profile = () => {
               </p>
             </Link>
             <div className=" ml-2 flex flex-col item-center justify-center font-bold">
-              <button className="text-red-500">Delete</button>
+              <button onClick={()=>handleDeleteClick(listing._id)} className="text-red-500">
+                Delete
+              </button>
               <button className="text-blue-700">Edit</button>
             </div>
           </div>
