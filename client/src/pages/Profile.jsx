@@ -286,7 +286,6 @@ const Profile = () => {
       <p className="text-green-700">
         {updateSuccess ? "User is updated successfully!" : ""}
       </p>
-    
 
       <button
         onClick={handleShowListings}
@@ -315,10 +314,15 @@ const Profile = () => {
               </p>
             </Link>
             <div className=" ml-2 flex flex-col item-center justify-center font-bold">
-              <button onClick={()=>handleDeleteClick(listing._id)} className="text-red-500">
+              <button
+                onClick={() => handleDeleteClick(listing._id)}
+                className="text-red-500"
+              >
                 Delete
               </button>
-              <button className="text-blue-700">Edit</button>
+              <Link to={`/update-listing/${listing._id}`}>
+                <button className="text-blue-700">Edit</button>
+              </Link>
             </div>
           </div>
         ))}
